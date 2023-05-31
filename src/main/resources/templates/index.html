@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="EN">
+<head>
+    <meta charset="UTF-8">
+    <title>Orders and Comments</title>
+    <link rel="stylesheet" th:href="@{styles.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script th:src="@{app.js}"></script>
+</head>
+<body>
+<h1>Orders and Comments</h1>
+<div th:each="order : ${orderCommentsMap}">
+    <h2 th:text="${'Order ' + order.key}"></h2>
+    <ul>
+        <li th:each="comment, commentIndex : ${order.value}">
+            <div th:id="${'comment_' + order.key + '_' + commentIndex.index}">
+                <span th:text="${comment}"></span>
+                <button th:id="${'edit_button_' + order.key + '_' + commentIndex.index}"
+                        th:attr="onclick=|editComment('${order.key}', '${commentIndex.index}')|" type="button">Edit
+                </button>
+                <button th:id="${'delete_button_' + order.key + '_' + commentIndex.index}"
+                        th:attr="onclick=|deleteComment('${order.key}', '${commentIndex.index}')|" type="button">Delete
+                </button>
+            </div>
+        </li>
+    </ul>
+    <button th:id="${'add_button_' + order.key}" th:attr="onclick=|openAddCommentForm('${order.key}')|"  type="button">Add comment</button>
+    <form th:id="${'addComment_' + order.key}"
+          th:style="'display: none;'"
+          class="addForm"
+          th:action="@{/addComment}"
+          method="post">
+        <input type="hidden" th:name="orderId" th:value="${order.key}">
+        <label for="comment">Comment:</label>
+        <input type="text" id="comment" name="comment" required>
+        <button type="button" th:attr="onclick=|cancelAddComment('${order.key}')|">Cancel</button>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+</body>
+</html>
